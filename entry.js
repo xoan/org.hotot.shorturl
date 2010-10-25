@@ -4,9 +4,9 @@ ext.HototShortUrl = {
 
 id: 'org.hotot.shorturl',
 
-name: 'Hotot Short Url',
+name: 'Hotot Short URL',
 
-description: 'To configure url shortener services.',
+description: 'To configure short URL services.',
 
 version: '1.0',
 
@@ -48,13 +48,13 @@ function unload() {
 options:
 function options() {
     content = '<p>\
-        <label>Short URL:</label>\
+        <label>Short URL:</label> \
         <input type="text" id="ext_hotot_short_url_short_url" class="dark" /></p>';
     ui.CommonDlg.reset();
-    ui.CommonDlg.set_title('Options for Hotot Short Url');
+    ui.CommonDlg.set_title('Options for Hotot Short URL');
     ui.CommonDlg.set_content(content);
     ui.CommonDlg.add_button('ext_btn_hotot_short_url_save',
-        'Save', null,
+        'Save', 'Save Your Changes',
         ext.HototShortUrl.on_btn_save_prefs_clicked);
     $('#ext_hotot_short_url_short_url').val(ui.StatusBox.short_url_base);
 
