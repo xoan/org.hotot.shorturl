@@ -77,6 +77,11 @@ function set_service_url(service_index) {
     // permits to asign above values before using them
     // var service = ext.HototShortUrl.services[service_index];
     ext.HototShortUrl.prefs.get('service', function(key, val) {
+        if (val == null) {
+            for (val in ext.HototShortUrl.services) {
+                break;
+            }
+        }
         var service = ext.HototShortUrl.services[val];
         if (service.url) {
             ext.HototShortUrl.service_url = service.url + '?';
