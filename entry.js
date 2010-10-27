@@ -36,7 +36,10 @@ services: {
         url: 'http://api.bit.ly/v3/shorten',
         params: {
             login: 'login',
-            api_key: 'apiKey',
+            api_key: {
+                param: 'apiKey',
+                help: 'http://bit.ly/a/your_api_key'
+            },
             extra: {
                 format: 'txt'
             },
@@ -48,7 +51,10 @@ services: {
         url: 'http://kcy.me/api/',
         params: {
             login: 'u',
-            api_key: 'key',
+            api_key: {
+                param: 'key',
+                help: 'http://karmacracy.com/settings?t=connections'
+            },
             long_url: 'url'
         }
     },
@@ -90,7 +96,7 @@ function set_service_url(service_index) {
                 ext.HototShortUrl.service_url+= ext.HototShortUrl.user_login + '&';
             }
             if (service.params.api_key) {
-                ext.HototShortUrl.service_url+= service.params.api_key + '=';
+                ext.HototShortUrl.service_url+= service.params.api_key.param + '=';
                 ext.HototShortUrl.service_url+= ext.HototShortUrl.user_api_key + '&';
             }
             if (service.params.extra) {
@@ -194,14 +200,14 @@ options:
 function options() {
     content = '<p>\
         <label>Short URL Service:</label> \
-        <select id="ext_hotot_short_url_service" class="dark">\
+        <select id="ext_hotot_short_url_service" title="Choose a Service" class="dark">\
         </select>\
         </p><p id="ext_hotot_short_url_login">\
         <label>Login:</label> \
         <input type="text" class="dark" />\
         </p><p id="ext_hotot_short_url_api_key">\
         <label>API Key:</label> \
-        <input type="text" class="dark" />\
+        <input type="text" class="dark" /> <a href="" title="Help" style="color:#fff;">Help</a>\
         </p><p id="ext_hotot_short_url_other">\
         <label>Other Short URL Endpoint:</label> \
         <input type="text" class="dark" /><br />\
@@ -222,15 +228,21 @@ function options() {
         );
     });
     $('#ext_hotot_short_url_service').change(function() {
-        ext.HototShortUrl.services[$(this).val()].url
+        service = ext.HototShortUrl.services[$(this).val()];
+        service.url
             ? $('#ext_hotot_short_url_other').hide()
             : $('#ext_hotot_short_url_other').show();
-        ext.HototShortUrl.services[$(this).val()].params.login
+        service.params.login
             ? $('#ext_hotot_short_url_login').show()
             : $('#ext_hotot_short_url_login').hide();
-        ext.HototShortUrl.services[$(this).val()].params.api_key
+        service.params.api_key
             ? $('#ext_hotot_short_url_api_key').show()
             : $('#ext_hotot_short_url_api_key').hide();
+        service.params.api_key.help
+            ? $('#ext_hotot_short_url_api_key a').attr(
+                'href', service.params.api_key.help).attr(
+                'title', 'Where is my ' + service.name + ' API Key?').show()
+            : $('#ext_hotot_short_url_api_key a').hide();
         ext.HototShortUrl.prefs.get('other', function(key, val) {
             $('#ext_hotot_short_url_other input').val(val);
         });
