@@ -83,12 +83,12 @@ function set_service_url(service_index) {
     // permits to asign above values before using them
     // var service = ext.HototShortUrl.services[service_index];
     ext.HototShortUrl.prefs.get('service', function(key, val) { //
-        if (val == null) {
-            for (val in ext.HototShortUrl.services) {
-                break;
-            }
-        }
-        var service = ext.HototShortUrl.services[val];
+        if (val == null) { //
+            for (val in ext.HototShortUrl.services) { //
+                break; //
+            } //
+        } //
+        var service = ext.HototShortUrl.services[val]; //
         if (service.url) {
             var service_url = service.url + '?';
             if (service.params.login) {
@@ -162,7 +162,7 @@ function on_btn_save_prefs_clicked(event) {
             || service.params.api_key && prefs.api_key == ''))
         || (service.url == undefined && prefs.other == '')) {
         ui.Notification.set(
-            'Please fill form fields for ' + service.name + '.').show();
+            'Please fill form fields for ' + service.name + ' Service.').show();
         return;
     }
     ext.HototShortUrl.prefs.set('service', prefs.service);
@@ -260,7 +260,7 @@ function options() {
                 $('#ext_hotot_short_url_api_key input').val(val);
             }
         );
-    });
+    }).attr('title', 'Choose a Service');
     ext.HototShortUrl.prefs.get('service', function(key, val) {
         if (val == null) {
             for (val in ext.HototShortUrl.services) {
