@@ -82,7 +82,7 @@ function set_service_url(service_index) {
     // Is not possible to concatenate db values, so make a new transaction
     // permits to asign above values before using them
     // var service = ext.HototShortUrl.services[service_index];
-    ext.HototShortUrl.prefs.get('service', function(key, val) {
+    ext.HototShortUrl.prefs.get('service', function(key, val) { //
         if (val == null) {
             for (val in ext.HototShortUrl.services) {
                 break;
@@ -90,25 +90,26 @@ function set_service_url(service_index) {
         }
         var service = ext.HototShortUrl.services[val];
         if (service.url) {
-            ext.HototShortUrl.service_url = service.url + '?';
+            var service_url = service.url + '?';
             if (service.params.login) {
-                ext.HototShortUrl.service_url+= service.params.login + '=';
-                ext.HototShortUrl.service_url+= ext.HototShortUrl.user_login + '&';
+                service_url+= service.params.login + '=';
+                service_url+= ext.HototShortUrl.user_login + '&';
             }
             if (service.params.api_key) {
-                ext.HototShortUrl.service_url+= service.params.api_key.param + '=';
-                ext.HototShortUrl.service_url+= ext.HototShortUrl.user_api_key + '&';
+                service_url+= service.params.api_key.param + '=';
+                service_url+= ext.HototShortUrl.user_api_key + '&';
             }
             if (service.params.extra) {
-                ext.HototShortUrl.service_url+= $.param(service.params.extra) + '&';
+                service_url+= $.param(service.params.extra) + '&';
             }
-            ext.HototShortUrl.service_url += service.params.long_url + '=';
+            service_url += service.params.long_url + '=';
         } else {
             ext.HototShortUrl.prefs.get('other', function(key, val) {
-                ext.HototShortUrl.service_url = val;
+                var service_url = val;
             });
         }
-        utility.Console.out('Short URL: ' + ext.HototShortUrl.service_url);
+        utility.Console.out('Short URL: ' + service_url);
+        ext.HototShortUrl.service_url = service_url;
     }); //
 },
 
@@ -160,7 +161,8 @@ function on_btn_save_prefs_clicked(event) {
         && (service.params.login && prefs.login == ''
             || service.params.api_key && prefs.api_key == ''))
         || (service.url == undefined && prefs.other == '')) {
-        ui.Notification.set('Please fill form fields for ' + service.name + '.').show();
+        ui.Notification.set(
+            'Please fill form fields for ' + service.name + '.').show();
         return;
     }
     ext.HototShortUrl.prefs.set('service', prefs.service);
@@ -188,7 +190,8 @@ function load() {
         }
         ext.HototShortUrl.set_service_url(val);
     });
-    $('#btn_shorturl').unbind('click').bind('click', ext.HototShortUrl.on_btn_short_url_clicked).show();
+    $('#btn_shorturl').unbind('click').bind(
+        'click', ext.HototShortUrl.on_btn_short_url_clicked).show();
 },
 
 unload:
@@ -200,14 +203,14 @@ options:
 function options() {
     content = '<p>\
         <label>Short URL Service:</label> \
-        <select id="ext_hotot_short_url_service" title="Choose a Service" class="dark">\
+        <select id="ext_hotot_short_url_service" class="dark">\
         </select>\
         </p><p id="ext_hotot_short_url_login">\
         <label>Login:</label> \
         <input type="text" class="dark" />\
         </p><p id="ext_hotot_short_url_api_key">\
         <label>API Key:</label> \
-        <input type="text" class="dark" /> <a href="" title="Help" style="color:#fff;">Help</a>\
+        <input type="text" class="dark" /> <a>Help</a>\
         </p><p id="ext_hotot_short_url_other">\
         <label>Other Short URL Endpoint:</label> \
         <input type="text" class="dark" /><br />\
@@ -238,20 +241,25 @@ function options() {
         service.params.api_key
             ? $('#ext_hotot_short_url_api_key').show()
             : $('#ext_hotot_short_url_api_key').hide();
-        service.params.api_key.help
+        (service.params.api_key && service.params.api_key.help)
             ? $('#ext_hotot_short_url_api_key a').attr(
                 'href', service.params.api_key.help).attr(
-                'title', 'Where is my ' + service.name + ' API Key?').show()
+                'title', 'Where is my ' + service.name + ' API Key?').css(
+                'color', '#fff').show()
             : $('#ext_hotot_short_url_api_key a').hide();
         ext.HototShortUrl.prefs.get('other', function(key, val) {
             $('#ext_hotot_short_url_other input').val(val);
         });
-        ext.HototShortUrl.prefs.get($(this).val() + '_login', function(key, val) {
-            $('#ext_hotot_short_url_login input').val(val)
-        });
-        ext.HototShortUrl.prefs.get($(this).val() + '_api_key', function(key, val) {
-            $('#ext_hotot_short_url_api_key input').val(val);
-        });
+        ext.HototShortUrl.prefs.get(
+            $(this).val() + '_login', function(key, val) {
+                $('#ext_hotot_short_url_login input').val(val)
+            }
+        );
+        ext.HototShortUrl.prefs.get(
+            $(this).val() + '_api_key', function(key, val) {
+                $('#ext_hotot_short_url_api_key input').val(val);
+            }
+        );
     });
     ext.HototShortUrl.prefs.get('service', function(key, val) {
         if (val == null) {
